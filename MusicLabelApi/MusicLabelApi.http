@@ -1,0 +1,6 @@
+@MusicLabelApi_HostAddress = http://localhost:5004
+
+GET {{MusicLabelApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
