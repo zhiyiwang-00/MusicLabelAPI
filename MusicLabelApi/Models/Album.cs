@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
+namespace MusicLabelApi.Models;
 public class Album{
     public int Id { get; set; }
     [MaxLength(50)]
@@ -9,11 +10,11 @@ public class Album{
 
     public required int ReleaseYear { get; set; }
 
-    public required int MusicLabelId { get; set; }
-    public required MusicLabel MusicLabel { get; set; }
+    public int MusicLabelId { get; set; }
+    public MusicLabel? MusicLabel { get; set; }
     [MaxLength(100)]
     public string? CoverImage { get; set; }
 
-    public ICollection<Artist> Artists { get; set; }
+    public ICollection<Artist>? Artists { get; set; }
 
 }

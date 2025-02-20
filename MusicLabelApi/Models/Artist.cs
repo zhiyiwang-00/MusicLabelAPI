@@ -1,5 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
+
+namespace MusicLabelApi.Models;
+
 public class Artist{
     public int Id { get; set; }
     [MaxLength(50)]
@@ -11,6 +14,6 @@ public class Artist{
     [MaxLength(100)]
     public string? Biography { get; set; }
 
-    public ICollection<Album> Albums { get; set; }
+    public ICollection<Album>? Albums { get; set; }
 
 }

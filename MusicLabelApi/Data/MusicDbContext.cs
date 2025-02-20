@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using MusicLabelApi.Models;
 
 
-
+namespace MusicLabelApi.Data;
 public class MusicDbContext : DbContext
 {
     public DbSet<MusicLabel> MusicLabels { get; set; }
