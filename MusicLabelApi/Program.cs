@@ -45,6 +45,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<MusicLabelService>();
+builder.Services.AddScoped<AlbumService>();
 builder.Services.AddScoped<ArtistService>();
 
 builder.Services.AddDbContext<MusicDbContext>(options =>
