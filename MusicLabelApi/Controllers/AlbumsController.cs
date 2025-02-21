@@ -3,19 +3,24 @@ using Microsoft.EntityFrameworkCore;
 using MusicLabelApi.Models;
 using MusicLabelApi.Services;
 using MusicLabelApi.Models.DTOs;
+using MusicLabelApi.Data;
 
-namespace MusicLabelApi.Controllers{
+namespace MusicLabelApi.Controllers
+{
     [ApiController]
     [Route("api/v1/albums")]
 
     public class AlbumsController : ControllerBase
     {
         private readonly AlbumService _albumService;
-        public AlbumsController(AlbumService albumService)
+        private readonly ArtistService _artistService;
+
+        public AlbumsController(AlbumService albumService, ArtistService artistService)
         {
             _albumService = albumService;
+            _artistService = artistService;
         }
-        
+
         [HttpGet("{id}")]
         public ActionResult<AlbumReadDTO> GetAlbumById(int id)
         {
@@ -77,7 +82,31 @@ namespace MusicLabelApi.Controllers{
             _albumService.Delete(id);
             return Ok();
 
+        }
+
+        [HttpPut("{id}/artists")]
+        public ActionResult UpdateArtistsOfAlbum(int id, [FromBody] List<int> artistIds)
+        {
+            var album = _albumService.GetAlbumById(id);
+            if (album == null)
+            {
+                return NotFound();
+            }
+            album.Artists = new List<Artist>();
+            foreach (var artistId in artistIds)
+            {
+                var artist = _artistService.GetArtistById(artistId);
+                if (artist != null)
+                {
+                    album.Artists.Add(artist);
+                }
+            }
+            _albumService.Update(album);
+            return Ok();
+        }
+        
+           
+
     }
-     
-    }
+
 }

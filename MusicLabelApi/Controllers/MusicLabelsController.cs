@@ -13,9 +13,12 @@ namespace MusicLabelApi.Controllers
     public class MusicLabelsController : ControllerBase
     {
         private readonly MusicLabelService _musicLabelService;
-        public MusicLabelsController(MusicLabelService musicLabelService)
+        private readonly AlbumService _albumService;
+
+        public MusicLabelsController(MusicLabelService musicLabelService, AlbumService albumService)
         {
             _musicLabelService = musicLabelService;
+            _albumService = albumService;
         }
 
         [HttpGet("{id}")]
@@ -74,6 +77,28 @@ namespace MusicLabelApi.Controllers
             }
             _musicLabelService.Delete(id);
             return NoContent();
+        }
+
+
+        [HttpPut("{id}/albums")]
+        public ActionResult UpdateAlbumsOfMusicLabel(int id, [FromBody] List<int> albumIds)
+        {
+            var musicLabel = _musicLabelService.GetMusicLabelById(id);
+            if (musicLabel == null)
+            {
+                return NotFound();
+            }
+            musicLabel.Albums = new List<Album>();
+            foreach (var albumId in albumIds)
+            {
+                var album = _albumService.GetAlbumById(albumId);
+                if (album != null)
+                {
+                    musicLabel.Albums.Add(album);
+                }
+            }
+            _musicLabelService.Update(musicLabel);
+            return Ok();
         }
     }
 
