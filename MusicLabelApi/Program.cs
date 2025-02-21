@@ -46,6 +46,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<MusicLabelService>();
 builder.Services.AddScoped<AlbumService>();
+builder.Services.AddScoped<ArtistService>();
 
 builder.Services.AddDbContext<MusicDbContext>(options =>
 options.UseSqlServer("Server=localhost,1433;Database=MusicDB;User Id=sa; Password=dockerStrongPwd123; TrustServerCertificate=True;")
