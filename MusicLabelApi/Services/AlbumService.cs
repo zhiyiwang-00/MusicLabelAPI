@@ -32,7 +32,7 @@ public class AlbumService
 
     public IEnumerable<Album> GetAllAlbums()
     {
-        var albums = _dbcontext.Albums.ToList();
+        var albums = _dbcontext.Albums.Include(a => a.MusicLabel).Include(a => a.Artists).ToList();
         return albums;
     }
 

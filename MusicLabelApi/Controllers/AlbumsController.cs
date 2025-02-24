@@ -80,6 +80,41 @@ namespace MusicLabelApi.Controllers
             return Ok(artistsDto);
         }
 
+        [HttpGet("search")]
+        [SwaggerOperation(
+            Summary = "Search albums by genre, release year, or label name",
+            Description = "Search albums by genre, release year and label name"
+        )]
+        [SwaggerResponse(200, "List of albums", typeof(AlbumReadDTO))]
+        public ActionResult<IEnumerable<AlbumReadDTO>> SearchAlbums(
+            [FromQuery] string? genre,
+            [FromQuery] int? releaseYear,
+            [FromQuery] string? labelName)
+        {
+            var query = _albumService.GetAllAlbums().AsQueryable();
+
+            if (!string.IsNullOrEmpty(genre))
+            {
+                genre = genre.ToLower();
+                query = query.Where(a => a.Genre.ToLower() == genre);
+            }
+
+            if (releaseYear.HasValue)
+            {
+                query = query.Where(a => a.ReleaseYear == releaseYear);
+            }
+
+            if (!string.IsNullOrEmpty(labelName))
+            {
+                labelName = labelName.ToLower();
+                query = query.Where(a => a.MusicLabel.Name.ToLower() == labelName);
+            }
+
+            var albums = query.ToList();
+            var albumsDto = _mapper.Map<IEnumerable<AlbumReadDTO>>(albums);
+            return Ok(albumsDto);
+        }
+
         [HttpPost]
         [SwaggerOperation(
             Summary = "Create a new album",
