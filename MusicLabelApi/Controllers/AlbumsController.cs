@@ -5,6 +5,7 @@ using MusicLabelApi.Services;
 using MusicLabelApi.Models.DTOs;
 using MusicLabelApi.Data;
 using AutoMapper;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace MusicLabelApi.Controllers
 {
@@ -27,6 +28,11 @@ namespace MusicLabelApi.Controllers
 
 
         [HttpGet]
+        [SwaggerOperation(
+            Summary = "Get all albums",
+            Description = "Get all albums from the database"
+        )]
+        [SwaggerResponse(200, "List of albums", typeof(AlbumReadDTO))]
         public ActionResult<IEnumerable<AlbumReadDTO>> GetAlbums()
         {
             var albums = _albumService.GetAllAlbums();
@@ -36,18 +42,32 @@ namespace MusicLabelApi.Controllers
 
 
         [HttpGet("{id}")]
+        [SwaggerOperation(
+            Summary = "Get an album by id",
+            Description = "Get an album by its unique identifier"
+        )]
+        [SwaggerResponse(200, "The album", typeof(AlbumReadDTO))]
+        [SwaggerResponse(404, "Album not found")]
         public ActionResult<AlbumReadDTO> GetAlbumById(int id)
         {
             var album = _albumService.GetAlbumById(id);
+
+            if (album == null)
+            {
+                return NotFound();
+            }
             var albumDto = _mapper.Map<AlbumReadDTO>(album);
-            // if (album == null)
-            // {
-            //     return NotFound();
-            // }
+
             return Ok(albumDto);
         }
 
-        [HttpGet ("{id}/artists")]
+        [HttpGet("{id}/artists")]
+        [SwaggerOperation(
+            Summary = "Get all artists of an album",
+            Description = "Get all artists of an album by its unique identifier"
+        )]
+        [SwaggerResponse(200, "List of artists", typeof(ArtistReadDTO))]
+        [SwaggerResponse(404, "Album not found")]
         public ActionResult<IEnumerable<ArtistReadDTO>> GetArtistsOfAlbum(int id)
         {
             var album = _albumService.GetAlbumById(id);
@@ -61,15 +81,26 @@ namespace MusicLabelApi.Controllers
         }
 
         [HttpPost]
+        [SwaggerOperation(
+            Summary = "Create a new album",
+            Description = "Create a new album in the database"
+        )]
+        [SwaggerResponse(200, "The album was created")]
         public ActionResult CreateAlbum([FromBody] AlbumCreateDTO albumDto)
         {
-            var album = _mapper.Map<Album>(albumDto); 
+            var album = _mapper.Map<Album>(albumDto);
 
             _albumService.CreateNewAlbum(album);
             return Ok();
         }
 
         [HttpPut("{id}")]
+        [SwaggerOperation(
+            Summary = "Update an album",
+            Description = "Update an album by its unique identifier"
+        )]
+        [SwaggerResponse(204, "The album was updated")]
+        [SwaggerResponse(404, "Album not found")]
         public ActionResult UpdateAlbum(int id, [FromBody] AlbumUpdateDTO albumDto)
         {
             var existingAlbum = _albumService.GetAlbumById(id);
@@ -83,6 +114,12 @@ namespace MusicLabelApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [SwaggerOperation(
+            Summary = "Delete an album",
+            Description = "Delete an album by its unique identifier"
+        )]
+        [SwaggerResponse(200, "The album was deleted")]
+        [SwaggerResponse(404, "Album not found")]
         public ActionResult DeleteAlbum(int id)
         {
             if (_albumService.GetAlbumById(id) == null)
@@ -95,6 +132,12 @@ namespace MusicLabelApi.Controllers
         }
 
         [HttpPut("{id}/artists")]
+        [SwaggerOperation(
+            Summary = "Update artists of an album",
+            Description = "Update artists of an album by its unique identifier"
+        )]
+        [SwaggerResponse(200, "Artists of the album updated")]
+        [SwaggerResponse(404, "Album not found")]
         public ActionResult UpdateArtistsOfAlbum(int id, [FromBody] List<int> artistIds)
         {
             var album = _albumService.GetAlbumById(id);
@@ -114,9 +157,6 @@ namespace MusicLabelApi.Controllers
             _albumService.Update(album);
             return Ok();
         }
-
-
-
     }
 
 }

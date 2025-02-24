@@ -4,6 +4,7 @@ using MusicLabelApi.Models;
 using MusicLabelApi.Services;
 using MusicLabelApi.Models.DTOs;
 using AutoMapper;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace MusicLabelApi.Controllers
 {
@@ -20,8 +21,13 @@ namespace MusicLabelApi.Controllers
             _artistService = artistService;
             _mapper = mapper;
         }
-        
+
         [HttpGet]
+        [SwaggerOperation(
+            Summary = "Get all artists",
+            Description = "Get all artists from the database"
+        )]
+        [SwaggerResponse(200, "List of artists", typeof(ArtistReadDTO))]
         public ActionResult<IEnumerable<ArtistReadDTO>> GetArtists()
         {
             var artists = _artistService.GetAllArtists();
@@ -31,30 +37,47 @@ namespace MusicLabelApi.Controllers
 
 
         [HttpGet("{id}")]
+        [SwaggerOperation(
+            Summary = "Get an artist by id",
+            Description = "Get an artist by its unique identifier"
+        )]
+        [SwaggerResponse(200, "The artist", typeof(ArtistReadDTO))]
+        [SwaggerResponse(404, "Artist not found")]
         public ActionResult<ArtistReadDTO> GetArtistById(int id)
         {
             var artist = _artistService.GetArtistById(id);
-             
+            if (artist == null)
+            {
+                return NotFound();
+            }
             var artistDto = _mapper.Map<ArtistReadDTO>(artist);
-            // if (artist == null)
-            // {
-            //     return NotFound();
-            // }
+
             return Ok(artistDto);
         }
 
-        
+
 
         [HttpPost]
+        [SwaggerOperation(
+            Summary = "Create a new artist",
+            Description = "Create a new artist in the database"
+        )]
+        [SwaggerResponse(200, "The artist was created")]
         public ActionResult CreateArtist([FromBody] ArtistCreateDTO artistDto)
         {
-            var artist = _mapper.Map<Artist>(artistDto); 
+            var artist = _mapper.Map<Artist>(artistDto);
 
             _artistService.CreateNewArtist(artist);
             return Ok();
         }
 
         [HttpPut("{id}")]
+        [SwaggerOperation(
+            Summary = "Update an artist",
+            Description = "Update an artist by its unique identifier"
+        )]
+        [SwaggerResponse(204, "The artist was updated")]
+        [SwaggerResponse(404, "Artist not found")]
         public ActionResult UpdateArtist(int id, [FromBody] ArtistUpdateDTO artistDto)
         {
             var existingArtist = _artistService.GetArtistById(id);
@@ -70,6 +93,12 @@ namespace MusicLabelApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [SwaggerOperation(
+            Summary = "Delete an artist",
+            Description = "Delete an artist by its unique identifier"
+        )]
+        [SwaggerResponse(204, "The artist was deleted")]
+        [SwaggerResponse(404, "Artist not found")]
         public ActionResult DeleteArtist(int id)
         {
             if (_artistService.GetArtistById(id) == null)

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MusicLabelApi.Models;
 using MusicLabelApi.Models.DTOs;
 using MusicLabelApi.Services;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace MusicLabelApi.Controllers
 {
@@ -25,7 +26,13 @@ namespace MusicLabelApi.Controllers
             _mapper = mapper;
         }
 
+
         [HttpGet]
+        [SwaggerOperation(
+            Summary = "Get all music labels",
+            Description = "Get all music labels from the database"
+        )]
+        [SwaggerResponse(200, "List of music labels", typeof(MusicLabelReadDTO))]
         public ActionResult<IEnumerable<MusicLabelReadDTO>> GetMusicLabels()
         {
             var musicLabels = _musicLabelService.GetAllMusicLabels();
@@ -35,6 +42,12 @@ namespace MusicLabelApi.Controllers
         }
 
          [HttpGet("{id}")]
+         [SwaggerOperation(
+             Summary = "Get a music label by id",
+             Description = "Get a music label by its unique identifier"
+         )]
+         [SwaggerResponse(200, "The music label", typeof(MusicLabelReadDTO))]
+         [SwaggerResponse(404, "Music label not found")]
         public ActionResult<MusicLabelReadDTO> GetMusicLabelById(int id)
         {
             var musicLabel = _musicLabelService.GetMusicLabelById(id);
@@ -47,6 +60,12 @@ namespace MusicLabelApi.Controllers
         }
 
         [HttpGet ("{id}/albums")]
+        [SwaggerOperation(
+            Summary = "Get all albums of a music label",
+            Description = "Get all albums of a music label by its unique identifier"
+        )]
+        [SwaggerResponse(200, "List of albums", typeof(AlbumReadDTO))]
+        [SwaggerResponse(404, "Music label not found")]
         public ActionResult<IEnumerable<AlbumReadDTO>> GetAlbumsOfMusicLabel(int id)
         {
             var musicLabel = _musicLabelService.GetMusicLabelById(id);
@@ -60,6 +79,12 @@ namespace MusicLabelApi.Controllers
         }
 
         [HttpGet ("{id}/artists")]
+        [SwaggerOperation(
+            Summary = "Get all artists of a music label",
+            Description = "Get all artists of a music label by its unique identifier"
+        )]
+        [SwaggerResponse(200, "List of artists", typeof(ArtistReadDTO))]
+        [SwaggerResponse(404, "Music label not found")]
         public ActionResult<IEnumerable<ArtistReadDTO>> GetArtistsOfMusicLabel(int id)
         {
             var musicLabel = _musicLabelService.GetMusicLabelById(id);
@@ -79,6 +104,11 @@ namespace MusicLabelApi.Controllers
         }
 
         [HttpPost]
+        [SwaggerOperation(
+            Summary = "Create a new music label",
+            Description = "Create a new music label in the database"
+        )]
+        [SwaggerResponse(200, "Music label created")]
         public ActionResult CreateMusicLabel([FromBody] MusicLabelCreateDTO musicLabelDto)
         {
             var musicLabel = _mapper.Map<MusicLabel>(musicLabelDto); 
@@ -88,6 +118,12 @@ namespace MusicLabelApi.Controllers
         }
 
         [HttpPut("{id}")]
+        [SwaggerOperation(
+            Summary = "Update a music label",
+            Description = "Update a music label in the database"
+        )]
+        [SwaggerResponse(204, "Music label updated")]
+        [SwaggerResponse(404, "Music label not found")]
         public ActionResult UpdateMusicLabel(int id, [FromBody] MusicLabelUpdateDTO musicLabelDto)
         {
             var existingMusicLabel = _musicLabelService.GetMusicLabelById(id);
@@ -103,6 +139,12 @@ namespace MusicLabelApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [SwaggerOperation(
+            Summary = "Delete a music label",
+            Description = "Delete a music label from the database"
+        )]
+        [SwaggerResponse(204, "Music label deleted")]
+        [SwaggerResponse(404, "Music label not found")]
         public ActionResult DeleteMusicLabel(int id)
         {
             if (_musicLabelService.GetMusicLabelById(id) == null)
@@ -115,6 +157,13 @@ namespace MusicLabelApi.Controllers
 
 
         [HttpPut("{id}/albums")]
+        [SwaggerOperation(
+            Summary = "Update albums of a music label",
+            Description = "Update albums of a music label in the database"
+        )]
+        [SwaggerResponse(200, "Albums updated")]
+        [SwaggerResponse(400, "Some albums were not found")]
+        [SwaggerResponse(404, "Music label not found")]
         public ActionResult UpdateAlbumsOfMusicLabel(int id, [FromBody] List<int> albumIds)
         {
             var musicLabel = _musicLabelService.GetMusicLabelById(id);
