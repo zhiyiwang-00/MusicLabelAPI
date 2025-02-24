@@ -4,6 +4,7 @@ using MusicLabelApi.Models;
 using MusicLabelApi.Services;
 using MusicLabelApi.Models.DTOs;
 using MusicLabelApi.Data;
+using AutoMapper;
 
 namespace MusicLabelApi.Controllers
 {
@@ -15,41 +16,41 @@ namespace MusicLabelApi.Controllers
         private readonly AlbumService _albumService;
         private readonly ArtistService _artistService;
 
-        public AlbumsController(AlbumService albumService, ArtistService artistService)
+        private readonly IMapper _mapper;
+
+        public AlbumsController(AlbumService albumService, ArtistService artistService, IMapper mapper)
         {
             _albumService = albumService;
             _artistService = artistService;
+            _mapper = mapper;
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<AlbumReadDTO> GetAlbumById(int id)
-        {
-            var album = _albumService.GetAlbumById(id);
-            // if (album == null)
-            // {
-            //     return NotFound();
-            // }
-            return Ok(album);
-        }
 
         [HttpGet]
         public ActionResult<IEnumerable<AlbumReadDTO>> GetAlbums()
         {
             var albums = _albumService.GetAllAlbums();
-            return Ok(albums);
+            var albumsDto = _mapper.Map<IEnumerable<AlbumReadDTO>>(albums);
+            return Ok(albumsDto);
+        }
+
+
+        [HttpGet("{id}")]
+        public ActionResult<AlbumReadDTO> GetAlbumById(int id)
+        {
+            var album = _albumService.GetAlbumById(id);
+            var albumDto = _mapper.Map<AlbumReadDTO>(album);
+            // if (album == null)
+            // {
+            //     return NotFound();
+            // }
+            return Ok(albumDto);
         }
 
         [HttpPost]
         public ActionResult CreateAlbum([FromBody] AlbumCreateDTO albumDto)
         {
-            var album = new Album
-            {
-                Title = albumDto.Title,
-                Genre = albumDto.Genre,
-                ReleaseYear = albumDto.ReleaseYear,
-                CoverImage = albumDto.CoverImage,
-                MusicLabelId = albumDto.MusicLabelId
-            };
+            var album = _mapper.Map<Album>(albumDto); 
 
             _albumService.CreateNewAlbum(album);
             return Ok();
@@ -63,11 +64,7 @@ namespace MusicLabelApi.Controllers
             {
                 return NotFound();
             }
-            existingAlbum.Title = albumDto.Title;
-            existingAlbum.Genre = albumDto.Genre;
-            existingAlbum.ReleaseYear = albumDto.ReleaseYear;
-            existingAlbum.CoverImage = albumDto.CoverImage;
-            existingAlbum.MusicLabelId = albumDto.MusicLabelId;
+            _mapper.Map(albumDto, existingAlbum);
             _albumService.Update(existingAlbum);
             return Ok();
         }
@@ -104,8 +101,8 @@ namespace MusicLabelApi.Controllers
             _albumService.Update(album);
             return Ok();
         }
-        
-           
+
+
 
     }
 
