@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MusicLabelApi.Models;
 using MusicLabelApi.Services;
 using MusicLabelApi.Models.DTOs;
+using AutoMapper;
 
 namespace MusicLabelApi.Controllers
 {
@@ -12,41 +13,42 @@ namespace MusicLabelApi.Controllers
     public class ArtistsController : ControllerBase
     {
         private readonly ArtistService _artistService;
-        public ArtistsController(ArtistService artistService)
+
+        private readonly IMapper _mapper;
+        public ArtistsController(ArtistService artistService, IMapper mapper)
         {
             _artistService = artistService;
+            _mapper = mapper;
         }
-
+        
+        [HttpGet]
+        public ActionResult<IEnumerable<ArtistReadDTO>> GetArtists()
+        {
+            var artists = _artistService.GetAllArtists();
+            var artistsDto = _mapper.Map<IEnumerable<ArtistReadDTO>>(artists);
+            return Ok(artistsDto);
+        }
 
 
         [HttpGet("{id}")]
         public ActionResult<ArtistReadDTO> GetArtistById(int id)
         {
             var artist = _artistService.GetArtistById(id);
+             
+            var artistDto = _mapper.Map<ArtistReadDTO>(artist);
             // if (artist == null)
             // {
             //     return NotFound();
             // }
-            return Ok(artist);
+            return Ok(artistDto);
         }
 
-        [HttpGet]
-        public ActionResult<IEnumerable<ArtistReadDTO>> GetArtists()
-        {
-            var artists = _artistService.GetAllArtists();
-            return Ok(artists);
-        }
+        
 
         [HttpPost]
         public ActionResult CreateArtist([FromBody] ArtistCreateDTO artistDto)
         {
-            var artist = new Artist
-            {
-                FullName = artistDto.FullName,
-                StageName = artistDto.StageName,
-                Picture = artistDto.Picture,
-                Biography = artistDto.Biography
-            };
+            var artist = _mapper.Map<Artist>(artistDto); 
 
             _artistService.CreateNewArtist(artist);
             return Ok();
@@ -61,10 +63,7 @@ namespace MusicLabelApi.Controllers
                 return NotFound();
             }
 
-            existingArtist.FullName = artistDto.FullName;
-            existingArtist.StageName = artistDto.StageName;
-            existingArtist.Picture = artistDto.Picture;
-            existingArtist.Biography = artistDto.Biography;
+            _mapper.Map(artistDto, existingArtist);
 
             _artistService.Update(existingArtist);
             return NoContent();

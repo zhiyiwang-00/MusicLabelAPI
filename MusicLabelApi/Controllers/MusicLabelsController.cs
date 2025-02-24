@@ -27,8 +27,16 @@ namespace MusicLabelApi.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet]
+        public ActionResult<IEnumerable<MusicLabelReadDTO>> GetMusicLabels()
+        {
+            var musicLabels = _musicLabelService.GetAllMusicLabels();
+            var musicLabelsDto = _mapper.Map<IEnumerable<MusicLabelReadDTO>>(musicLabels);
+            return Ok(musicLabelsDto);
 
-        [HttpGet("{id}")]
+        }
+
+         [HttpGet("{id}")]
         public ActionResult<MusicLabelReadDTO> GetMusicLabelById(int id)
         {
             var musicLabel = _musicLabelService.GetMusicLabelById(id);
@@ -39,15 +47,6 @@ namespace MusicLabelApi.Controllers
             //     return NotFound();
             // }
             return Ok(musicLabelsDto);
-        }
-
-        [HttpGet]
-        public ActionResult<IEnumerable<MusicLabelReadDTO>> GetMusicLabels()
-        {
-            var musicLabels = _musicLabelService.GetAllMusicLabels();
-            var musicLabelsDto = _mapper.Map<IEnumerable<MusicLabelReadDTO>>(musicLabels);
-            return Ok(musicLabelsDto);
-
         }
 
         [HttpPost]

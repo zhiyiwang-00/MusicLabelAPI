@@ -13,5 +13,5 @@ public class AlbumUpdateDTO
     
     public string? CoverImage { get; set; }
 
-    public ICollection<Artist>? Artists { get; set; }
+    //public ICollection<Artist>? Artists { get; set; }
 }
