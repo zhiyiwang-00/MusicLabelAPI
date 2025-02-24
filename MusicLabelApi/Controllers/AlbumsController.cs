@@ -47,6 +47,19 @@ namespace MusicLabelApi.Controllers
             return Ok(albumDto);
         }
 
+        [HttpGet ("{id}/artists")]
+        public ActionResult<IEnumerable<ArtistReadDTO>> GetArtistsOfAlbum(int id)
+        {
+            var album = _albumService.GetAlbumById(id);
+            if (album == null)
+            {
+                return NotFound();
+            }
+
+            var artistsDto = _mapper.Map<IEnumerable<ArtistReadDTO>>(album.Artists);
+            return Ok(artistsDto);
+        }
+
         [HttpPost]
         public ActionResult CreateAlbum([FromBody] AlbumCreateDTO albumDto)
         {

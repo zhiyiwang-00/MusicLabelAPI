@@ -18,8 +18,6 @@ namespace MusicLabelApi.Controllers
 
         private readonly IMapper _mapper;
 
-
-
         public MusicLabelsController(MusicLabelService musicLabelService, AlbumService albumService, IMapper mapper)
         {
             _musicLabelService = musicLabelService;
@@ -40,13 +38,44 @@ namespace MusicLabelApi.Controllers
         public ActionResult<MusicLabelReadDTO> GetMusicLabelById(int id)
         {
             var musicLabel = _musicLabelService.GetMusicLabelById(id);
+             if (musicLabel == null)
+            {
+                return NotFound();
+            }
             var musicLabelsDto = _mapper.Map<MusicLabelReadDTO>(musicLabel);
-
-            // if (musicLabel == null)
-            // {
-            //     return NotFound();
-            // }
             return Ok(musicLabelsDto);
+        }
+
+        [HttpGet ("{id}/albums")]
+        public ActionResult<IEnumerable<AlbumReadDTO>> GetAlbumsOfMusicLabel(int id)
+        {
+            var musicLabel = _musicLabelService.GetMusicLabelById(id);
+            if (musicLabel == null)
+            {
+                return NotFound();
+            }
+
+            var albumsDto = _mapper.Map<IEnumerable<AlbumReadDTO>>(musicLabel.Albums);
+            return Ok(albumsDto);
+        }
+
+        [HttpGet ("{id}/artists")]
+        public ActionResult<IEnumerable<ArtistReadDTO>> GetArtistsOfMusicLabel(int id)
+        {
+            var musicLabel = _musicLabelService.GetMusicLabelById(id);
+            if (musicLabel == null)
+            {
+                return NotFound();
+            }
+
+            var artists = new List<Artist>();
+            if (musicLabel.Albums != null)
+            {
+                artists = musicLabel.Albums.SelectMany(a => a.Artists).Distinct().ToList();
+            }
+            var artistDto = _mapper.Map<IEnumerable<ArtistReadDTO>>(artists);
+            return Ok(artistDto);
+            
         }
 
         [HttpPost]
@@ -113,16 +142,6 @@ namespace MusicLabelApi.Controllers
                 album.MusicLabelId = musicLabel.Id;
                 _albumService.Update(album);
             }
-
-            // musicLabel.Albums = new List<Album>();
-            // foreach (var albumId in albumIds)
-            // {
-            //     var album = _albumService.GetAlbumById(albumId);
-            //     if (album != null)
-            //     {
-            //         musicLabel.Albums.Add(album);
-            //     }
-            // }
             _musicLabelService.Update(musicLabel);
             return Ok();
         }

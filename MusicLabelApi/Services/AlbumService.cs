@@ -1,5 +1,6 @@
 using MusicLabelApi.Models;
 using MusicLabelApi.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace MusicLabelApi.Services;
 
@@ -13,7 +14,19 @@ public class AlbumService
 
     public Album GetAlbumById(int id)
     {
-        var album = _dbcontext.Albums.Find(id);
+        // var album = _dbcontext.Albums.Find(id);
+        // return album;
+
+         var album = _dbcontext.Albums
+            .Include(a => a.MusicLabel) // Ensures Musiclabel are loaded
+            .Include(a => a.Artists) // Ensures Artist are loaded
+            .FirstOrDefault(a => a.Id == id);
+
+        if (album == null)
+        {
+            throw new KeyNotFoundException($"Album with Id {id} not found.");
+        }
+
         return album;
     }
 

@@ -1,6 +1,7 @@
 using MusicLabelApi.Models;
 using MusicLabelApi.Data;
 using MusicLabelApi.Models.DTOs;
+using Microsoft.EntityFrameworkCore;
 
 namespace MusicLabelApi.Services;
 
@@ -16,8 +17,19 @@ public class MusicLabelService
 
     public MusicLabel GetMusicLabelById(int id)
     {
-        var musicLabel = _dbcontext.MusicLabels.Find(id);
+        // var musicLabel = _dbcontext.MusicLabels.Find(id);
+        var musicLabel = _dbcontext.MusicLabels
+            .Include(ml => ml.Albums) // Ensures Albums are loaded
+            .ThenInclude(a => a.Artists) // Ensures Artists are loaded
+            .FirstOrDefault(ml => ml.Id == id);
+
+        if (musicLabel == null)
+        {
+            throw new KeyNotFoundException($"MusicLabel with Id {id} not found.");
+        }
+
         return musicLabel;
+ 
     }
 
     public IEnumerable<MusicLabel> GetAllMusicLabels()
