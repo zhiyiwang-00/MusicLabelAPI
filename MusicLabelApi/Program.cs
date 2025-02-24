@@ -35,6 +35,7 @@ using Microsoft.EntityFrameworkCore;
 using MusicLabelApi.Data;
 using MusicLabelApi.Services;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using MusicLabelApi.Profiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +50,9 @@ builder.Services.AddScoped<MusicLabelService>();
 builder.Services.AddScoped<AlbumService>();
 builder.Services.AddScoped<ArtistService>();
 
+builder.Services.AddAutoMapper(typeof(MusicLabelProfile));
+
+
 builder.Services.AddDbContext<MusicDbContext>(options =>
 options.UseSqlServer("Server=localhost,1433;Database=MusicDB;User Id=sa; Password=dockerStrongPwd123; TrustServerCertificate=True;")
 
@@ -62,6 +66,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+
 
 app.UseHttpsRedirection();
 

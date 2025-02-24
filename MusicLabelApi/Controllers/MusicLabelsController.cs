@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MusicLabelApi.Models;
@@ -15,39 +16,44 @@ namespace MusicLabelApi.Controllers
         private readonly MusicLabelService _musicLabelService;
         private readonly AlbumService _albumService;
 
-        public MusicLabelsController(MusicLabelService musicLabelService, AlbumService albumService)
+        private readonly IMapper _mapper;
+
+
+
+        public MusicLabelsController(MusicLabelService musicLabelService, AlbumService albumService, IMapper mapper)
         {
             _musicLabelService = musicLabelService;
             _albumService = albumService;
+            _mapper = mapper;
         }
+
 
         [HttpGet("{id}")]
         public ActionResult<MusicLabelReadDTO> GetMusicLabelById(int id)
         {
             var musicLabel = _musicLabelService.GetMusicLabelById(id);
+            var musicLabelsDto = _mapper.Map<MusicLabelReadDTO>(musicLabel);
+
             // if (musicLabel == null)
             // {
             //     return NotFound();
             // }
-            return Ok(musicLabel);
+            return Ok(musicLabelsDto);
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<MusicLabelReadDTO>> GetMusicLabels()
         {
             var musicLabels = _musicLabelService.GetAllMusicLabels();
-            return Ok(musicLabels);
+            var musicLabelsDto = _mapper.Map<IEnumerable<MusicLabelReadDTO>>(musicLabels);
+            return Ok(musicLabelsDto);
+
         }
 
         [HttpPost]
         public ActionResult CreateMusicLabel([FromBody] MusicLabelCreateDTO musicLabelDto)
         {
-            var musicLabel = new MusicLabel
-            {
-                Name = musicLabelDto.Name,
-                Description = musicLabelDto.Description,
-                Albums = musicLabelDto.Albums
-            };
+            var musicLabel = _mapper.Map<MusicLabel>(musicLabelDto); 
 
             _musicLabelService.CreateNewMusicLabel(musicLabel);
             return Ok();
@@ -62,8 +68,7 @@ namespace MusicLabelApi.Controllers
                 return NotFound();
             }
 
-            existingMusicLabel.Name = musicLabelDto.Name;
-            existingMusicLabel.Description = musicLabelDto.Description;
+            _mapper.Map(musicLabelDto, existingMusicLabel);
 
             _musicLabelService.Update(existingMusicLabel);
             return NoContent();
@@ -89,7 +94,7 @@ namespace MusicLabelApi.Controllers
             {
                 return NotFound();
             }
-            
+
             var albums = new List<Album>();
             foreach (var albumId in albumIds)
             {
