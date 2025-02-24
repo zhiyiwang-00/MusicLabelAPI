@@ -45,7 +45,8 @@ namespace MusicLabelApi.Controllers
             var musicLabel = new MusicLabel
             {
                 Name = musicLabelDto.Name,
-                Description = musicLabelDto.Description
+                Description = musicLabelDto.Description,
+                Albums = musicLabelDto.Albums
             };
 
             _musicLabelService.CreateNewMusicLabel(musicLabel);
@@ -88,15 +89,36 @@ namespace MusicLabelApi.Controllers
             {
                 return NotFound();
             }
-            musicLabel.Albums = new List<Album>();
+            
+            var albums = new List<Album>();
             foreach (var albumId in albumIds)
             {
                 var album = _albumService.GetAlbumById(albumId);
                 if (album != null)
                 {
-                    musicLabel.Albums.Add(album);
+                    albums.Add(album);
                 }
             }
+            if (albums.Count != albumIds.Count)
+            {
+                return BadRequest("Some albums were not found");
+            }
+
+            foreach (var album in albums)
+            {
+                album.MusicLabelId = musicLabel.Id;
+                _albumService.Update(album);
+            }
+
+            // musicLabel.Albums = new List<Album>();
+            // foreach (var albumId in albumIds)
+            // {
+            //     var album = _albumService.GetAlbumById(albumId);
+            //     if (album != null)
+            //     {
+            //         musicLabel.Albums.Add(album);
+            //     }
+            // }
             _musicLabelService.Update(musicLabel);
             return Ok();
         }
