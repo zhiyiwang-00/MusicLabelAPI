@@ -13,9 +13,12 @@ namespace MusicLabelApi.Controllers
     public class MusicLabelsController : ControllerBase
     {
         private readonly MusicLabelService _musicLabelService;
-        public MusicLabelsController(MusicLabelService musicLabelService)
+        private readonly AlbumService _albumService;
+
+        public MusicLabelsController(MusicLabelService musicLabelService, AlbumService albumService)
         {
             _musicLabelService = musicLabelService;
+            _albumService = albumService;
         }
 
         [HttpGet("{id}")]
@@ -42,7 +45,8 @@ namespace MusicLabelApi.Controllers
             var musicLabel = new MusicLabel
             {
                 Name = musicLabelDto.Name,
-                Description = musicLabelDto.Description
+                Description = musicLabelDto.Description,
+                Albums = musicLabelDto.Albums
             };
 
             _musicLabelService.CreateNewMusicLabel(musicLabel);
@@ -74,6 +78,49 @@ namespace MusicLabelApi.Controllers
             }
             _musicLabelService.Delete(id);
             return NoContent();
+        }
+
+
+        [HttpPut("{id}/albums")]
+        public ActionResult UpdateAlbumsOfMusicLabel(int id, [FromBody] List<int> albumIds)
+        {
+            var musicLabel = _musicLabelService.GetMusicLabelById(id);
+            if (musicLabel == null)
+            {
+                return NotFound();
+            }
+            
+            var albums = new List<Album>();
+            foreach (var albumId in albumIds)
+            {
+                var album = _albumService.GetAlbumById(albumId);
+                if (album != null)
+                {
+                    albums.Add(album);
+                }
+            }
+            if (albums.Count != albumIds.Count)
+            {
+                return BadRequest("Some albums were not found");
+            }
+
+            foreach (var album in albums)
+            {
+                album.MusicLabelId = musicLabel.Id;
+                _albumService.Update(album);
+            }
+
+            // musicLabel.Albums = new List<Album>();
+            // foreach (var albumId in albumIds)
+            // {
+            //     var album = _albumService.GetAlbumById(albumId);
+            //     if (album != null)
+            //     {
+            //         musicLabel.Albums.Add(album);
+            //     }
+            // }
+            _musicLabelService.Update(musicLabel);
+            return Ok();
         }
     }
 

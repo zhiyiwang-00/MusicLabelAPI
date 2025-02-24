@@ -3,7 +3,8 @@ using MusicLabelApi.Data;
 
 namespace MusicLabelApi.Services;
 
-public class AlbumService{
+public class AlbumService
+{
     MusicDbContext _dbcontext;
     public AlbumService(MusicDbContext dbcontext)
     {

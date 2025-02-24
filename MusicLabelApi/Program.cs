@@ -7,6 +7,7 @@
 // // dbContext.MusicLabels.Add(new MusicLabel { Name = "Universal Music", Description = "Leading global music company" });
 // // dbContext.MusicLabels.Add(new MusicLabel { Name = "Sony Music", Description = "Worldwide music corporation" });
 // // dbContext.MusicLabels.Add(new MusicLabel { Name = "Warner Music", Description = "Major global music company" });
+// dbContext.MusicLabels.Add(new MusicLabel { Name = "Universal Music", Description = "Leading global music company" });
 
 // // dbContext.Albums.Add(new Album { Title = "Pop Hits", Genre = "Pop", ReleaseYear = 2021, MusicLabelId = 1 });
 // // dbContext.Albums.Add(new Album { Title = "Rock Classics", Genre = "Rock", ReleaseYear = 2020, MusicLabelId = 2 });
