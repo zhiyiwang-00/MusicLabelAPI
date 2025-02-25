@@ -115,6 +115,35 @@ namespace MusicLabelApi.Controllers
             return Ok(albumsDto);
         }
 
+        [HttpGet("{id}/conditional-artists")]
+        [SwaggerOperation(
+            Summary = "Get an album by id, with conditional artists",
+            Description = "Get an album by its unique identifier, with conditional artists based on query parameter or header"
+        )]
+        [SwaggerResponse(200, "The album", typeof(AlbumReadDTO))]
+        [SwaggerResponse(404, "Album not found")]
+
+        public ActionResult<AlbumWithArtistsReadDTO> GetAlbumWithConditionalArtists(int id, [FromQuery] bool includeArtists = false, [FromHeader(Name = "X-Include-Artist")] string includeArtistsHeader = null)
+        {
+            var includeArtistsFlag = includeArtists || includeArtistsHeader == "true";
+            var albumQuery = _albumService.GetAlbumByIdWithArtist(id, includeArtistsFlag);
+
+            if (albumQuery == null)
+            {
+                return NotFound();
+            }
+            if (includeArtistsFlag)
+            {
+                var albumDto = _mapper.Map<AlbumWithArtistsReadDTO>(albumQuery);
+                albumDto.Artists = _mapper.Map<ICollection<ArtistSimpleReadDTO>>(albumQuery.Artists);
+                return Ok(albumDto);
+            } else
+            {
+                var albumDto = _mapper.Map<AlbumReadDTO>(albumQuery);
+                return Ok(albumDto);
+            }            
+        }
+
         [HttpPost]
         [SwaggerOperation(
             Summary = "Create a new album",

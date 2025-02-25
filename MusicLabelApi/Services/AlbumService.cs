@@ -30,6 +30,15 @@ public class AlbumService
         return album;
     }
 
+    public Album GetAlbumByIdWithArtist(int id, bool includeArtists = false){
+        var query = _dbcontext.Albums.AsQueryable();
+        if(includeArtists){
+            query = query.Include(a => a.Artists);
+        }
+        return query.FirstOrDefault(a => a.Id == id);
+    }
+    
+
     public IEnumerable<Album> GetAllAlbums()
     {
         var albums = _dbcontext.Albums.Include(a => a.MusicLabel).Include(a => a.Artists).ToList();

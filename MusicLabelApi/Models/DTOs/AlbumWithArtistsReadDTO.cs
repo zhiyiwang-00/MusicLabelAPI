@@ -1,8 +1,9 @@
 namespace MusicLabelApi.Models.DTOs;
 
-public class AlbumReadDTO
+public class AlbumWithArtistsReadDTO
 {
     public int Id { get; set; }
+
     public required string Title { get; set; }
     
     public required string Genre { get; set; }
@@ -14,5 +15,5 @@ public class AlbumReadDTO
     
     public string? CoverImage { get; set; }
 
-    // public ICollection<Artist>? Artists { get; set; }
+    public ICollection<ArtistSimpleReadDTO>? Artists { get; set; }
 }

@@ -12,6 +12,7 @@ namespace MusicLabelApi.Profiles
             CreateMap<Album, AlbumReadDTO>();
             CreateMap<AlbumCreateDTO, Album>();
             CreateMap<AlbumUpdateDTO, Album>();
+            CreateMap<Album, AlbumWithArtistsReadDTO>();
         }
     }
 }
