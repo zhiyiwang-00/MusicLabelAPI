@@ -32,11 +32,11 @@ namespace MusicLabelApi.Controllers
             Summary = "Get all music labels",
             Description = "Get all music labels from the database"
         )]
-        [SwaggerResponse(200, "List of music labels", typeof(MusicLabelReadDTO))]
-        public ActionResult<IEnumerable<MusicLabelReadDTO>> GetMusicLabels()
+        [SwaggerResponse(200, "List of music labels", typeof(MusicLabelWithIdDTO))]
+        public ActionResult<IEnumerable<MusicLabelWithIdDTO>> GetMusicLabels()
         {
             var musicLabels = _musicLabelService.GetAllMusicLabels();
-            var musicLabelsDto = _mapper.Map<IEnumerable<MusicLabelReadDTO>>(musicLabels);
+            var musicLabelsDto = _mapper.Map<IEnumerable<MusicLabelWithIdDTO>>(musicLabels);
             return Ok(musicLabelsDto);
 
         }
@@ -46,16 +46,16 @@ namespace MusicLabelApi.Controllers
              Summary = "Get a music label by id",
              Description = "Get a music label by its unique identifier"
          )]
-         [SwaggerResponse(200, "The music label", typeof(MusicLabelReadDTO))]
+         [SwaggerResponse(200, "The music label", typeof(MusicLabelWithIdDTO))]
          [SwaggerResponse(404, "Music label not found")]
-        public ActionResult<MusicLabelReadDTO> GetMusicLabelById(int id)
+        public ActionResult<MusicLabelWithIdDTO> GetMusicLabelById(int id)
         {
             var musicLabel = _musicLabelService.GetMusicLabelById(id);
              if (musicLabel == null)
             {
                 return NotFound();
             }
-            var musicLabelsDto = _mapper.Map<MusicLabelReadDTO>(musicLabel);
+            var musicLabelsDto = _mapper.Map<MusicLabelWithIdDTO>(musicLabel);
             return Ok(musicLabelsDto);
         }
 
@@ -83,9 +83,9 @@ namespace MusicLabelApi.Controllers
             Summary = "Get all artists of a music label",
             Description = "Get all artists of a music label by its unique identifier"
         )]
-        [SwaggerResponse(200, "List of artists", typeof(ArtistReadDTO))]
+        [SwaggerResponse(200, "List of artists", typeof(ArtistWithIdDTO))]
         [SwaggerResponse(404, "Music label not found")]
-        public ActionResult<IEnumerable<ArtistReadDTO>> GetArtistsOfMusicLabel(int id)
+        public ActionResult<IEnumerable<ArtistWithIdDTO>> GetArtistsOfMusicLabel(int id)
         {
             var musicLabel = _musicLabelService.GetMusicLabelById(id);
             if (musicLabel == null)
@@ -98,7 +98,7 @@ namespace MusicLabelApi.Controllers
             {
                 artists = musicLabel.Albums.SelectMany(a => a.Artists).Distinct().ToList();
             }
-            var artistDto = _mapper.Map<IEnumerable<ArtistReadDTO>>(artists);
+            var artistDto = _mapper.Map<IEnumerable<ArtistWithIdDTO>>(artists);
             return Ok(artistDto);
             
         }
@@ -109,7 +109,7 @@ namespace MusicLabelApi.Controllers
             Description = "Create a new music label in the database"
         )]
         [SwaggerResponse(200, "Music label created")]
-        public ActionResult CreateMusicLabel([FromBody] MusicLabelCreateDTO musicLabelDto)
+        public ActionResult CreateMusicLabel([FromBody] MusicLabelDTO musicLabelDto)
         {
             var musicLabel = _mapper.Map<MusicLabel>(musicLabelDto); 
 
@@ -124,7 +124,7 @@ namespace MusicLabelApi.Controllers
         )]
         [SwaggerResponse(204, "Music label updated")]
         [SwaggerResponse(404, "Music label not found")]
-        public ActionResult UpdateMusicLabel(int id, [FromBody] MusicLabelUpdateDTO musicLabelDto)
+        public ActionResult UpdateMusicLabel(int id, [FromBody] MusicLabelDTO musicLabelDto)
         {
             var existingMusicLabel = _musicLabelService.GetMusicLabelById(id);
             if (existingMusicLabel == null)

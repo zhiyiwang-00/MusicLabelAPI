@@ -9,9 +9,9 @@ namespace MusicLabelApi.Profiles
         public ArtistProfile()
         {
             // Source -> Target
-            CreateMap<Artist, ArtistReadDTO>();
-            CreateMap<ArtistCreateDTO, Artist>();
-            CreateMap<ArtistUpdateDTO, Artist>();
+            CreateMap<Artist, ArtistDTO>();
+            CreateMap<ArtistDTO, Artist>();
+            CreateMap<Artist, ArtistWithIdDTO>();
             CreateMap<Artist, ArtistSimpleReadDTO>();
         }
     }

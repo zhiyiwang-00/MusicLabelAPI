@@ -9,9 +9,9 @@ namespace MusicLabelApi.Profiles
         public MusicLabelProfile()
         {
             // Source -> Target
-            CreateMap<MusicLabel, MusicLabelReadDTO>();
-            CreateMap<MusicLabelCreateDTO, MusicLabel>();
-            CreateMap<MusicLabelUpdateDTO, MusicLabel>();
+            CreateMap<MusicLabel, MusicLabelWithIdDTO>();
+            CreateMap<MusicLabelDTO, MusicLabel>();
+            CreateMap<MusicLabel, MusicLabelDTO>();
         }
     }
 }

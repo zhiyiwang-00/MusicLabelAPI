@@ -27,11 +27,11 @@ namespace MusicLabelApi.Controllers
             Summary = "Get all artists",
             Description = "Get all artists from the database"
         )]
-        [SwaggerResponse(200, "List of artists", typeof(ArtistReadDTO))]
-        public ActionResult<IEnumerable<ArtistReadDTO>> GetArtists()
+        [SwaggerResponse(200, "List of artists", typeof(ArtistWithIdDTO))]
+        public ActionResult<IEnumerable<ArtistWithIdDTO>> GetArtists()
         {
             var artists = _artistService.GetAllArtists();
-            var artistsDto = _mapper.Map<IEnumerable<ArtistReadDTO>>(artists);
+            var artistsDto = _mapper.Map<IEnumerable<ArtistWithIdDTO>>(artists);
             return Ok(artistsDto);
         }
 
@@ -41,16 +41,16 @@ namespace MusicLabelApi.Controllers
             Summary = "Get an artist by id",
             Description = "Get an artist by its unique identifier"
         )]
-        [SwaggerResponse(200, "The artist", typeof(ArtistReadDTO))]
+        [SwaggerResponse(200, "The artist", typeof(ArtistWithIdDTO))]
         [SwaggerResponse(404, "Artist not found")]
-        public ActionResult<ArtistReadDTO> GetArtistById(int id)
+        public ActionResult<ArtistWithIdDTO> GetArtistById(int id)
         {
             var artist = _artistService.GetArtistById(id);
             if (artist == null)
             {
                 return NotFound();
             }
-            var artistDto = _mapper.Map<ArtistReadDTO>(artist);
+            var artistDto = _mapper.Map<ArtistWithIdDTO>(artist);
 
             return Ok(artistDto);
         }
@@ -63,7 +63,7 @@ namespace MusicLabelApi.Controllers
             Description = "Create a new artist in the database"
         )]
         [SwaggerResponse(200, "The artist was created")]
-        public ActionResult CreateArtist([FromBody] ArtistCreateDTO artistDto)
+        public ActionResult CreateArtist([FromBody] ArtistDTO artistDto)
         {
             var artist = _mapper.Map<Artist>(artistDto);
 
@@ -78,7 +78,7 @@ namespace MusicLabelApi.Controllers
         )]
         [SwaggerResponse(204, "The artist was updated")]
         [SwaggerResponse(404, "Artist not found")]
-        public ActionResult UpdateArtist(int id, [FromBody] ArtistUpdateDTO artistDto)
+        public ActionResult UpdateArtist(int id, [FromBody] ArtistDTO artistDto)
         {
             var existingArtist = _artistService.GetArtistById(id);
             if (existingArtist == null)

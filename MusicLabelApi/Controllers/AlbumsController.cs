@@ -32,11 +32,11 @@ namespace MusicLabelApi.Controllers
             Summary = "Get all albums",
             Description = "Get all albums from the database"
         )]
-        [SwaggerResponse(200, "List of albums", typeof(AlbumReadDTO))]
-        public ActionResult<IEnumerable<AlbumReadDTO>> GetAlbums()
+        [SwaggerResponse(200, "List of albums", typeof(AlbumWithIdDTO))]
+        public ActionResult<IEnumerable<AlbumWithIdDTO>> GetAlbums()
         {
             var albums = _albumService.GetAllAlbums();
-            var albumsDto = _mapper.Map<IEnumerable<AlbumReadDTO>>(albums);
+            var albumsDto = _mapper.Map<IEnumerable<AlbumWithIdDTO>>(albums);
             return Ok(albumsDto);
         }
 
@@ -46,9 +46,9 @@ namespace MusicLabelApi.Controllers
             Summary = "Get an album by id",
             Description = "Get an album by its unique identifier"
         )]
-        [SwaggerResponse(200, "The album", typeof(AlbumReadDTO))]
+        [SwaggerResponse(200, "The album", typeof(AlbumWithIdDTO))]
         [SwaggerResponse(404, "Album not found")]
-        public ActionResult<AlbumReadDTO> GetAlbumById(int id)
+        public ActionResult<AlbumWithIdDTO> GetAlbumById(int id)
         {
             var album = _albumService.GetAlbumById(id);
 
@@ -56,7 +56,7 @@ namespace MusicLabelApi.Controllers
             {
                 return NotFound();
             }
-            var albumDto = _mapper.Map<AlbumReadDTO>(album);
+            var albumDto = _mapper.Map<AlbumWithIdDTO>(album);
 
             return Ok(albumDto);
         }
@@ -66,9 +66,9 @@ namespace MusicLabelApi.Controllers
             Summary = "Get all artists of an album",
             Description = "Get all artists of an album by its unique identifier"
         )]
-        [SwaggerResponse(200, "List of artists", typeof(ArtistReadDTO))]
+        [SwaggerResponse(200, "List of artists", typeof(ArtistWithIdDTO))]
         [SwaggerResponse(404, "Album not found")]
-        public ActionResult<IEnumerable<ArtistReadDTO>> GetArtistsOfAlbum(int id)
+        public ActionResult<IEnumerable<ArtistWithIdDTO>> GetArtistsOfAlbum(int id)
         {
             var album = _albumService.GetAlbumById(id);
             if (album == null)
@@ -76,7 +76,7 @@ namespace MusicLabelApi.Controllers
                 return NotFound();
             }
 
-            var artistsDto = _mapper.Map<IEnumerable<ArtistReadDTO>>(album.Artists);
+            var artistsDto = _mapper.Map<IEnumerable<ArtistWithIdDTO>>(album.Artists);
             return Ok(artistsDto);
         }
 
@@ -85,8 +85,8 @@ namespace MusicLabelApi.Controllers
             Summary = "Search albums by genre, release year, or label name",
             Description = "Search albums by genre, release year and label name"
         )]
-        [SwaggerResponse(200, "List of albums", typeof(AlbumReadDTO))]
-        public ActionResult<IEnumerable<AlbumReadDTO>> SearchAlbums(
+        [SwaggerResponse(200, "List of albums", typeof(AlbumWithIdDTO))]
+        public ActionResult<IEnumerable<AlbumWithIdDTO>> SearchAlbums(
             [FromQuery] string? genre,
             [FromQuery] int? releaseYear,
             [FromQuery] string? labelName)
@@ -111,7 +111,7 @@ namespace MusicLabelApi.Controllers
             }
 
             var albums = query.ToList();
-            var albumsDto = _mapper.Map<IEnumerable<AlbumReadDTO>>(albums);
+            var albumsDto = _mapper.Map<IEnumerable<AlbumWithIdDTO>>(albums);
             return Ok(albumsDto);
         }
 
@@ -120,7 +120,7 @@ namespace MusicLabelApi.Controllers
             Summary = "Get an album by id, with conditional artists",
             Description = "Get an album by its unique identifier, with conditional artists based on query parameter or header"
         )]
-        [SwaggerResponse(200, "The album", typeof(AlbumReadDTO))]
+        [SwaggerResponse(200, "The album", typeof(AlbumWithIdDTO))]
         [SwaggerResponse(404, "Album not found")]
 
         public ActionResult<AlbumWithArtistsReadDTO> GetAlbumWithConditionalArtists(int id, [FromQuery] bool includeArtists = false, [FromHeader(Name = "X-Include-Artist")] string includeArtistsHeader = null)
@@ -139,7 +139,7 @@ namespace MusicLabelApi.Controllers
                 return Ok(albumDto);
             } else
             {
-                var albumDto = _mapper.Map<AlbumReadDTO>(albumQuery);
+                var albumDto = _mapper.Map<AlbumWithIdDTO>(albumQuery);
                 return Ok(albumDto);
             }            
         }
@@ -150,7 +150,7 @@ namespace MusicLabelApi.Controllers
             Description = "Create a new album in the database"
         )]
         [SwaggerResponse(200, "The album was created")]
-        public ActionResult CreateAlbum([FromBody] AlbumCreateDTO albumDto)
+        public ActionResult CreateAlbum([FromBody] AlbumDTO albumDto)
         {
             var album = _mapper.Map<Album>(albumDto);
 
@@ -165,7 +165,7 @@ namespace MusicLabelApi.Controllers
         )]
         [SwaggerResponse(204, "The album was updated")]
         [SwaggerResponse(404, "Album not found")]
-        public ActionResult UpdateAlbum(int id, [FromBody] AlbumUpdateDTO albumDto)
+        public ActionResult UpdateAlbum(int id, [FromBody] AlbumDTO albumDto)
         {
             var existingAlbum = _albumService.GetAlbumById(id);
             if (existingAlbum == null)
