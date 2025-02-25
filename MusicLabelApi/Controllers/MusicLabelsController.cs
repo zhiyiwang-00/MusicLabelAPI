@@ -138,6 +138,22 @@ namespace MusicLabelApi.Controllers
             return NoContent();
         }
 
+        [HttpPost("bulk")]
+        [SwaggerOperation(
+            Summary = "Create multiple music labels",
+            Description = "Create multiple music labels in the database"
+        )]
+        [SwaggerResponse(200, "The music labels were created")]
+        public ActionResult CreateBulkMusicLabels([FromBody] List<MusicLabelDTO> musicLabelDTOs)
+        {
+            var musiclabels = _mapper.Map<IEnumerable<MusicLabel>>(musicLabelDTOs);
+            foreach (var musicLabel in musiclabels)
+            {
+                _musicLabelService.CreateNewMusicLabel(musicLabel);
+            }
+            return Ok();
+        }
+
         [HttpDelete("{id}")]
         [SwaggerOperation(
             Summary = "Delete a music label",

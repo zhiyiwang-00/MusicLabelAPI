@@ -15,6 +15,8 @@ public class Album{
     [MaxLength(100)]
     public string? CoverImage { get; set; }
 
+    public bool IsDeleted { get; set; } = false;
+
     public ICollection<Artist>? Artists { get; set; }
 
 }

@@ -45,6 +45,16 @@ public class AlbumService
         return albums;
     }
 
+    public IEnumerable<Album> GetAllAlbums(bool includeDeleted)
+    {
+        var query = _dbcontext.Albums.AsQueryable();
+        if (!includeDeleted)
+        {
+            query = query.Where(a => !a.IsDeleted);
+        }
+        return query.Include(a => a.MusicLabel).Include(a => a.Artists).ToList();
+    }
+
     public Album CreateNewAlbum(Album album)
     {
         _dbcontext.Albums.Add(album);

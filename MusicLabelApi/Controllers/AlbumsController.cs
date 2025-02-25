@@ -27,9 +27,9 @@ namespace MusicLabelApi.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet("regular")]
         [SwaggerOperation(
-            Summary = "Get all albums",
+            Summary = "Get all albums without considering delete flag",
             Description = "Get all albums from the database"
         )]
         [SwaggerResponse(200, "List of albums", typeof(AlbumWithIdDTO))]
@@ -39,6 +39,20 @@ namespace MusicLabelApi.Controllers
             var albumsDto = _mapper.Map<IEnumerable<AlbumWithIdDTO>>(albums);
             return Ok(albumsDto);
         }
+
+        [HttpGet]
+        [SwaggerOperation(
+            Summary = "Get all albums, including soft deleted",
+            Description = "Get all albums from the database including soft deleted ones if the includeDeleted flag is set to true"
+        )]
+        [SwaggerResponse(200, "List of albums", typeof(AlbumWithIdDTO))]
+        public ActionResult<IEnumerable<AlbumWithIdDTO>> GetArtistsWithDeleteFlag([FromQuery] bool includeDeleted = false)
+        {
+            var albums = _albumService.GetAllAlbums(includeDeleted);
+            var albumsDto = _mapper.Map<IEnumerable<AlbumWithIdDTO>>(albums);
+            return Ok(albumsDto);
+        }
+
 
 
         [HttpGet("{id}")]
@@ -159,6 +173,22 @@ namespace MusicLabelApi.Controllers
             return Ok();
         }
 
+        [HttpPost("bulk")]
+        [SwaggerOperation(
+            Summary = "Create multiple albums",
+            Description = "Create multiple albums in the database"
+        )]
+        [SwaggerResponse(200, "The albums were created")]
+        public ActionResult CreateBulkAlbums([FromBody] List<AlbumDTO> albumDtos)
+        {
+            var albums = _mapper.Map<IEnumerable<Album>>(albumDtos);
+            foreach (var album in albums)
+            {
+                _albumService.CreateNewAlbum(album);
+            }
+            return Ok();
+        }
+
         [HttpPut("{id}")]
         [SwaggerOperation(
             Summary = "Update an album",
@@ -224,6 +254,44 @@ namespace MusicLabelApi.Controllers
             return Ok();
 
         }
-    }
 
+        [HttpDelete("{id}/soft_delete")]
+        [SwaggerOperation(
+            Summary = "Delete an album (soft delete)",
+            Description = "Delete an album by its unique identifier (soft delete)"
+        )]
+        [SwaggerResponse(204, "The album was soft deleted")]
+        [SwaggerResponse(404, "Album not found")]
+        public ActionResult SoftDeleteAlbum(int id)
+        {
+            var album = _albumService.GetAlbumById(id);
+            if (album == null)
+            {
+                return NotFound();
+            }
+            album.IsDeleted = true;
+            _albumService.Update(album);
+            return NoContent();
+        }
+
+        [HttpPost("{id}/restore")]
+        [SwaggerOperation(
+            Summary = "Restore an soft deleted album ",
+            Description = "Restore an album by its unique identifier, if it was soft deleted"
+        )]
+        [SwaggerResponse(204, "The album was restored")]
+        [SwaggerResponse(404, "Album not found")]
+        public ActionResult RestoreAlbum(int id)
+        {
+            var album = _albumService.GetAlbumById(id);
+            if (album == null)
+            {
+                return NotFound();
+            }
+            album.IsDeleted = false;
+            _albumService.Update(album);
+            return NoContent();
+        }
+
+    }
 }

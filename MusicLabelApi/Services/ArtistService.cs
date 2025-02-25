@@ -22,6 +22,16 @@ public class ArtistService{
         return musicLabels;
     }
 
+    public IEnumerable<Artist> GetAllArtists(bool includeDeleted = false)
+    {
+        if (includeDeleted)
+        {
+            return _dbcontext.Artists.ToList();
+        }
+        return _dbcontext.Artists.Where(a => a.IsDeleted == false).ToList();
+    }
+
+
     public Artist CreateNewArtist(Artist artist)
     {
         _dbcontext.Artists.Add(artist);
