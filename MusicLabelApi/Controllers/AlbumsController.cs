@@ -137,11 +137,12 @@ namespace MusicLabelApi.Controllers
                 var albumDto = _mapper.Map<AlbumWithArtistsReadDTO>(albumQuery);
                 albumDto.Artists = _mapper.Map<ICollection<ArtistSimpleReadDTO>>(albumQuery.Artists);
                 return Ok(albumDto);
-            } else
+            }
+            else
             {
                 var albumDto = _mapper.Map<AlbumWithIdDTO>(albumQuery);
                 return Ok(albumDto);
-            }            
+            }
         }
 
         [HttpPost]
@@ -177,23 +178,7 @@ namespace MusicLabelApi.Controllers
             return Ok();
         }
 
-        [HttpDelete("{id}")]
-        [SwaggerOperation(
-            Summary = "Delete an album",
-            Description = "Delete an album by its unique identifier"
-        )]
-        [SwaggerResponse(200, "The album was deleted")]
-        [SwaggerResponse(404, "Album not found")]
-        public ActionResult DeleteAlbum(int id)
-        {
-            if (_albumService.GetAlbumById(id) == null)
-            {
-                return NotFound();
-            }
-            _albumService.Delete(id);
-            return Ok();
 
-        }
 
         [HttpPut("{id}/artists")]
         [SwaggerOperation(
@@ -220,6 +205,24 @@ namespace MusicLabelApi.Controllers
             }
             _albumService.Update(album);
             return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        [SwaggerOperation(
+          Summary = "Delete an album",
+          Description = "Delete an album by its unique identifier"
+      )]
+        [SwaggerResponse(200, "The album was deleted")]
+        [SwaggerResponse(404, "Album not found")]
+        public ActionResult DeleteAlbum(int id)
+        {
+            if (_albumService.GetAlbumById(id) == null)
+            {
+                return NotFound();
+            }
+            _albumService.Delete(id);
+            return Ok();
+
         }
     }
 

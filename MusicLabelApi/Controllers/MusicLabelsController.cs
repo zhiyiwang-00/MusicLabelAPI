@@ -64,9 +64,9 @@ namespace MusicLabelApi.Controllers
             Summary = "Get all albums of a music label",
             Description = "Get all albums of a music label by its unique identifier"
         )]
-        [SwaggerResponse(200, "List of albums", typeof(AlbumReadDTO))]
+        [SwaggerResponse(200, "List of albums", typeof(AlbumWithIdDTO))]
         [SwaggerResponse(404, "Music label not found")]
-        public ActionResult<IEnumerable<AlbumReadDTO>> GetAlbumsOfMusicLabel(int id)
+        public ActionResult<IEnumerable<AlbumWithIdDTO>> GetAlbumsOfMusicLabel(int id)
         {
             var musicLabel = _musicLabelService.GetMusicLabelById(id);
             if (musicLabel == null)
@@ -74,7 +74,7 @@ namespace MusicLabelApi.Controllers
                 return NotFound();
             }
 
-            var albumsDto = _mapper.Map<IEnumerable<AlbumReadDTO>>(musicLabel.Albums);
+            var albumsDto = _mapper.Map<IEnumerable<AlbumWithIdDTO>>(musicLabel.Albums);
             return Ok(albumsDto);
         }
 
