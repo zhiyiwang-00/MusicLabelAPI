@@ -16,7 +16,6 @@ namespace MusicLabelApi.Controllers
     {
         private readonly MusicLabelService _musicLabelService;
         private readonly AlbumService _albumService;
-
         private readonly IMapper _mapper;
 
         public MusicLabelsController(MusicLabelService musicLabelService, AlbumService albumService, IMapper mapper)
@@ -38,8 +37,8 @@ namespace MusicLabelApi.Controllers
             var musicLabels = _musicLabelService.GetAllMusicLabels();
             var musicLabelsDto = _mapper.Map<IEnumerable<MusicLabelWithIdDTO>>(musicLabels);
             return Ok(musicLabelsDto);
-
         }
+
 
          [HttpGet("{id}")]
          [SwaggerOperation(
@@ -59,6 +58,7 @@ namespace MusicLabelApi.Controllers
             return Ok(musicLabelsDto);
         }
 
+
         [HttpGet ("{id}/albums")]
         [SwaggerOperation(
             Summary = "Get all albums of a music label",
@@ -77,6 +77,7 @@ namespace MusicLabelApi.Controllers
             var albumsDto = _mapper.Map<IEnumerable<AlbumWithIdDTO>>(musicLabel.Albums);
             return Ok(albumsDto);
         }
+
 
         [HttpGet ("{id}/artists")]
         [SwaggerOperation(
@@ -100,8 +101,8 @@ namespace MusicLabelApi.Controllers
             }
             var artistDto = _mapper.Map<IEnumerable<ArtistWithIdDTO>>(artists);
             return Ok(artistDto);
-            
         }
+
 
         [HttpPost]
         [SwaggerOperation(
@@ -116,6 +117,24 @@ namespace MusicLabelApi.Controllers
             _musicLabelService.CreateNewMusicLabel(musicLabel);
             return Ok();
         }
+
+
+        [HttpPost("bulk")]
+        [SwaggerOperation(
+            Summary = "Create multiple music labels",
+            Description = "Create multiple music labels in the database"
+        )]
+        [SwaggerResponse(200, "The music labels were created")]
+        public ActionResult CreateBulkMusicLabels([FromBody] List<MusicLabelDTO> musicLabelDTOs)
+        {
+            var musiclabels = _mapper.Map<IEnumerable<MusicLabel>>(musicLabelDTOs);
+            foreach (var musicLabel in musiclabels)
+            {
+                _musicLabelService.CreateNewMusicLabel(musicLabel);
+            }
+            return Ok();
+        }
+
 
         [HttpPut("{id}")]
         [SwaggerOperation(
@@ -135,39 +154,6 @@ namespace MusicLabelApi.Controllers
             _mapper.Map(musicLabelDto, existingMusicLabel);
 
             _musicLabelService.Update(existingMusicLabel);
-            return NoContent();
-        }
-
-        [HttpPost("bulk")]
-        [SwaggerOperation(
-            Summary = "Create multiple music labels",
-            Description = "Create multiple music labels in the database"
-        )]
-        [SwaggerResponse(200, "The music labels were created")]
-        public ActionResult CreateBulkMusicLabels([FromBody] List<MusicLabelDTO> musicLabelDTOs)
-        {
-            var musiclabels = _mapper.Map<IEnumerable<MusicLabel>>(musicLabelDTOs);
-            foreach (var musicLabel in musiclabels)
-            {
-                _musicLabelService.CreateNewMusicLabel(musicLabel);
-            }
-            return Ok();
-        }
-
-        [HttpDelete("{id}")]
-        [SwaggerOperation(
-            Summary = "Delete a music label",
-            Description = "Delete a music label from the database"
-        )]
-        [SwaggerResponse(204, "Music label deleted")]
-        [SwaggerResponse(404, "Music label not found")]
-        public ActionResult DeleteMusicLabel(int id)
-        {
-            if (_musicLabelService.GetMusicLabelById(id) == null)
-            {
-                return NotFound();
-            }
-            _musicLabelService.Delete(id);
             return NoContent();
         }
 
@@ -207,9 +193,27 @@ namespace MusicLabelApi.Controllers
                 album.MusicLabelId = musicLabel.Id;
                 _albumService.Update(album);
             }
+            
             _musicLabelService.Update(musicLabel);
             return Ok();
         }
-    }
 
+
+        [HttpDelete("{id}")]
+        [SwaggerOperation(
+            Summary = "Delete a music label",
+            Description = "Delete a music label from the database"
+        )]
+        [SwaggerResponse(204, "Music label deleted")]
+        [SwaggerResponse(404, "Music label not found")]
+        public ActionResult DeleteMusicLabel(int id)
+        {
+            if (_musicLabelService.GetMusicLabelById(id) == null)
+            {
+                return NotFound();
+            }
+            _musicLabelService.Delete(id);
+            return NoContent();
+        }
+    }
 }

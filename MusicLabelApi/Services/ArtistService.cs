@@ -3,24 +3,22 @@ using MusicLabelApi.Data;
 
 namespace MusicLabelApi.Services;
 
-public class ArtistService{
+public class ArtistService
+{
     MusicDbContext _dbcontext;
+
     public ArtistService(MusicDbContext dbcontext)
     {
         _dbcontext = dbcontext;
     }
 
-    public Artist GetArtistById(int id)
-    {
-        var artist = _dbcontext.Artists.Find(id);
-        return artist;
-    }
 
     public IEnumerable<Artist> GetAllArtists()
     {
         var musicLabels = _dbcontext.Artists.ToList();
         return musicLabels;
     }
+
 
     public IEnumerable<Artist> GetAllArtists(bool includeDeleted = false)
     {
@@ -31,6 +29,18 @@ public class ArtistService{
         return _dbcontext.Artists.Where(a => a.IsDeleted == false).ToList();
     }
 
+    
+    public Artist GetArtistById(int id)
+    {
+        var artist = _dbcontext.Artists.Find(id);
+        if (artist == null)
+        {
+            throw new KeyNotFoundException($"Artist with Id {id} not found.");
+        }
+        
+        return artist;
+    }
+
 
     public Artist CreateNewArtist(Artist artist)
     {
@@ -39,11 +49,13 @@ public class ArtistService{
         return artist;
     }
 
+    
     public void Update(Artist artist)
     {
         _dbcontext.Artists.Update(artist);
         _dbcontext.SaveChanges();
     }
+
 
     public void Delete(int id)
     {

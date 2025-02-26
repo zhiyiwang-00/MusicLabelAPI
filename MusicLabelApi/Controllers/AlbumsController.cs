@@ -16,7 +16,6 @@ namespace MusicLabelApi.Controllers
     {
         private readonly AlbumService _albumService;
         private readonly ArtistService _artistService;
-
         private readonly IMapper _mapper;
 
         public AlbumsController(AlbumService albumService, ArtistService artistService, IMapper mapper)
@@ -39,6 +38,7 @@ namespace MusicLabelApi.Controllers
             var albumsDto = _mapper.Map<IEnumerable<AlbumWithIdDTO>>(albums);
             return Ok(albumsDto);
         }
+
 
         [HttpGet]
         [SwaggerOperation(
@@ -74,6 +74,7 @@ namespace MusicLabelApi.Controllers
             return Ok(albumDto);
         }
 
+
         [HttpGet("{id}/artists")]
         [SwaggerOperation(
             Summary = "Get all artists of an album",
@@ -92,6 +93,7 @@ namespace MusicLabelApi.Controllers
             var artistsDto = _mapper.Map<IEnumerable<ArtistWithIdDTO>>(album.Artists);
             return Ok(artistsDto);
         }
+
 
         [HttpGet("search")]
         [SwaggerOperation(
@@ -128,6 +130,7 @@ namespace MusicLabelApi.Controllers
             return Ok(albumsDto);
         }
 
+
         [HttpGet("{id}/conditional-artists")]
         [SwaggerOperation(
             Summary = "Get an album by id, with conditional artists",
@@ -135,7 +138,6 @@ namespace MusicLabelApi.Controllers
         )]
         [SwaggerResponse(200, "The album", typeof(AlbumWithIdDTO))]
         [SwaggerResponse(404, "Album not found")]
-
         public ActionResult<AlbumWithArtistsReadDTO> GetAlbumWithConditionalArtists(int id, [FromQuery] bool includeArtists = false, [FromHeader(Name = "X-Include-Artist")] string includeArtistsHeader = null)
         {
             var includeArtistsFlag = includeArtists || includeArtistsHeader == "true";
@@ -158,6 +160,7 @@ namespace MusicLabelApi.Controllers
             }
         }
 
+
         [HttpPost]
         [SwaggerOperation(
             Summary = "Create a new album",
@@ -171,6 +174,7 @@ namespace MusicLabelApi.Controllers
             _albumService.CreateNewAlbum(album);
             return Ok();
         }
+
 
         [HttpPost("bulk")]
         [SwaggerOperation(
@@ -187,6 +191,7 @@ namespace MusicLabelApi.Controllers
             }
             return Ok();
         }
+
 
         [HttpPut("{id}")]
         [SwaggerOperation(
@@ -206,7 +211,6 @@ namespace MusicLabelApi.Controllers
             _albumService.Update(existingAlbum);
             return Ok();
         }
-
 
 
         [HttpPut("{id}/artists")]
@@ -236,11 +240,12 @@ namespace MusicLabelApi.Controllers
             return Ok();
         }
 
+
         [HttpDelete("{id}")]
         [SwaggerOperation(
           Summary = "Delete an album",
           Description = "Delete an album by its unique identifier"
-      )]
+        )]
         [SwaggerResponse(200, "The album was deleted")]
         [SwaggerResponse(404, "Album not found")]
         public ActionResult DeleteAlbum(int id)
@@ -251,8 +256,8 @@ namespace MusicLabelApi.Controllers
             }
             _albumService.Delete(id);
             return Ok();
-
         }
+
 
         [HttpDelete("{id}/soft_delete")]
         [SwaggerOperation(
@@ -273,6 +278,7 @@ namespace MusicLabelApi.Controllers
             return NoContent();
         }
 
+
         [HttpPost("{id}/restore")]
         [SwaggerOperation(
             Summary = "Restore an soft deleted album ",
@@ -291,6 +297,5 @@ namespace MusicLabelApi.Controllers
             _albumService.Update(album);
             return NoContent();
         }
-
     }
 }

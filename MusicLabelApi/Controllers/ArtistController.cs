@@ -14,13 +14,14 @@ namespace MusicLabelApi.Controllers
     public class ArtistsController : ControllerBase
     {
         private readonly ArtistService _artistService;
-
         private readonly IMapper _mapper;
+
         public ArtistsController(ArtistService artistService, IMapper mapper)
         {
             _artistService = artistService;
             _mapper = mapper;
         }
+
 
         [HttpGet("simple")]
         [SwaggerOperation(
@@ -34,6 +35,7 @@ namespace MusicLabelApi.Controllers
             var artistsDto = _mapper.Map<IEnumerable<ArtistWithIdDTO>>(artists);
             return Ok(artistsDto);
         }
+
 
         [HttpGet]
         [SwaggerOperation(
@@ -68,7 +70,6 @@ namespace MusicLabelApi.Controllers
         }
 
 
-
         [HttpPost]
         [SwaggerOperation(
             Summary = "Create a new artist",
@@ -82,6 +83,24 @@ namespace MusicLabelApi.Controllers
             _artistService.CreateNewArtist(artist);
             return Ok();
         }
+
+
+        [HttpPost("bulk")]
+        [SwaggerOperation(
+            Summary = "Create multiple artists",
+            Description = "Create multiple artists in the database"
+        )]
+        [SwaggerResponse(200, "The artists were created")]
+        public ActionResult CreateBulkArtists([FromBody] List<ArtistDTO> artistDtos)
+        {
+            var artists = _mapper.Map<IEnumerable<Artist>>(artistDtos);
+            foreach (var artist in artists)
+            {
+                _artistService.CreateNewArtist(artist);
+            }
+            return Ok();
+        }
+
 
         [HttpPut("{id}")]
         [SwaggerOperation(
@@ -104,6 +123,7 @@ namespace MusicLabelApi.Controllers
             return NoContent();
         }
 
+
         [HttpDelete("{id}")]
         [SwaggerOperation(
             Summary = "Delete an artist from database",
@@ -119,22 +139,6 @@ namespace MusicLabelApi.Controllers
             }
             _artistService.Delete(id);
             return NoContent();
-        }
-
-        [HttpPost("bulk")]
-        [SwaggerOperation(
-            Summary = "Create multiple artists",
-            Description = "Create multiple artists in the database"
-        )]
-        [SwaggerResponse(200, "The artists were created")]
-        public ActionResult CreateBulkArtists([FromBody] List<ArtistDTO> artistDtos)
-        {
-            var artists = _mapper.Map<IEnumerable<Artist>>(artistDtos);
-            foreach (var artist in artists)
-            {
-                _artistService.CreateNewArtist(artist);
-            }
-            return Ok();
         }
 
 
@@ -176,8 +180,5 @@ namespace MusicLabelApi.Controllers
             _artistService.Update(artist);
             return NoContent();
         }
-
     }
-
-
 }

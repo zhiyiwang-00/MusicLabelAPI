@@ -7,37 +7,12 @@ namespace MusicLabelApi.Services;
 public class AlbumService
 {
     MusicDbContext _dbcontext;
+
     public AlbumService(MusicDbContext dbcontext)
     {
         _dbcontext = dbcontext;
     }
 
-    public Album GetAlbumById(int id)
-    {
-        // var album = _dbcontext.Albums.Find(id);
-        // return album;
-
-         var album = _dbcontext.Albums
-            .Include(a => a.MusicLabel) // Ensures Musiclabel are loaded
-            .Include(a => a.Artists) // Ensures Artist are loaded
-            .FirstOrDefault(a => a.Id == id);
-
-        if (album == null)
-        {
-            throw new KeyNotFoundException($"Album with Id {id} not found.");
-        }
-
-        return album;
-    }
-
-    public Album GetAlbumByIdWithArtist(int id, bool includeArtists = false){
-        var query = _dbcontext.Albums.AsQueryable();
-        if(includeArtists){
-            query = query.Include(a => a.Artists);
-        }
-        return query.FirstOrDefault(a => a.Id == id);
-    }
-    
 
     public IEnumerable<Album> GetAllAlbums()
     {
@@ -55,6 +30,34 @@ public class AlbumService
         return query.Include(a => a.MusicLabel).Include(a => a.Artists).ToList();
     }
 
+
+    public Album GetAlbumById(int id)
+    {
+        var album = _dbcontext.Albums
+           .Include(a => a.MusicLabel)
+           .Include(a => a.Artists)
+           .FirstOrDefault(a => a.Id == id);
+
+        if (album == null)
+        {
+            throw new KeyNotFoundException($"Album with Id {id} not found.");
+        }
+
+        return album;
+    }
+
+
+    public Album GetAlbumByIdWithArtist(int id, bool includeArtists = false)
+    {
+        var query = _dbcontext.Albums.AsQueryable();
+        if (includeArtists)
+        {
+            query = query.Include(a => a.Artists);
+        }
+        return query.FirstOrDefault(a => a.Id == id);
+    }
+
+
     public Album CreateNewAlbum(Album album)
     {
         _dbcontext.Albums.Add(album);
@@ -62,12 +65,14 @@ public class AlbumService
         return album;
     }
 
+
     public void Update(Album album)
     {
         _dbcontext.Albums.Update(album);
         _dbcontext.SaveChanges();
     }
 
+    
     public void Delete(int id)
     {
         var album = _dbcontext.Albums.Find(id);
