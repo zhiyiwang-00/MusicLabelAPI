@@ -53,9 +53,9 @@ builder.Services.AddScoped<ArtistService>();
 
 builder.Services.AddAutoMapper(typeof(MusicLabelProfile));
 
-
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<MusicDbContext>(options =>
-options.UseSqlServer("Server=localhost,1433;Database=MusicDB;User Id=sa; Password=dockerStrongPwd123; TrustServerCertificate=True;")
+options.UseSqlServer(connectionString)
 
     );
 
