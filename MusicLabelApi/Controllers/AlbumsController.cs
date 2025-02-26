@@ -27,9 +27,9 @@ namespace MusicLabelApi.Controllers
         }
 
 
-        [HttpGet("regular")]
+        [HttpGet("simple")]
         [SwaggerOperation(
-            Summary = "Get all albums without considering delete flag",
+            Summary = "Get all albums",
             Description = "Get all albums from the database"
         )]
         [SwaggerResponse(200, "List of albums", typeof(AlbumWithIdDTO))]
@@ -42,7 +42,7 @@ namespace MusicLabelApi.Controllers
 
         [HttpGet]
         [SwaggerOperation(
-            Summary = "Get all albums, including soft deleted",
+            Summary = "Get all albums with optional inclusion of soft-deleted records",
             Description = "Get all albums from the database including soft deleted ones if the includeDeleted flag is set to true"
         )]
         [SwaggerResponse(200, "List of albums", typeof(AlbumWithIdDTO))]
@@ -52,7 +52,6 @@ namespace MusicLabelApi.Controllers
             var albumsDto = _mapper.Map<IEnumerable<AlbumWithIdDTO>>(albums);
             return Ok(albumsDto);
         }
-
 
 
         [HttpGet("{id}")]

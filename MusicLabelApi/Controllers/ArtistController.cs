@@ -22,9 +22,9 @@ namespace MusicLabelApi.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("regular")]
+        [HttpGet("simple")]
         [SwaggerOperation(
-            Summary = "Get all artists without considering delete flag",
+            Summary = "Get all artists",
             Description = "Get all artists from the database"
         )]
         [SwaggerResponse(200, "List of artists", typeof(ArtistWithIdDTO))]
@@ -37,7 +37,7 @@ namespace MusicLabelApi.Controllers
 
         [HttpGet]
         [SwaggerOperation(
-            Summary = "Get all artists, including soft deleted",
+            Summary = "Get all artists with optional inclusion of soft-deleted records",
             Description = "Get all artists from the database including soft deleted ones if the includeDeleted flag is set to true"
         )]
         [SwaggerResponse(200, "List of artists", typeof(ArtistWithIdDTO))]
