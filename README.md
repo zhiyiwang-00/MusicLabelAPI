@@ -29,25 +29,8 @@ A RESTful API built with ASP.NET Core and EF Core to manage music labels, albums
    dotnet run
    ```
 
-## API Endpoints
-- **Music Labels**: `GET /api/labels`, `POST /api/labels`, `PUT /api/labels/{id}`, `DELETE /api/labels/{id}`
-- **Albums**: `GET /api/albums`, `POST /api/albums`, `PUT /api/albums/{id}`, `DELETE /api/albums/{id}`
-- **Artists**: `GET /api/artists`, `POST /api/artists`, `PUT /api/artists/{id}`, `DELETE /api/artists/{id}`
-
 ## Documentation
 Swagger UI is available at:
 ```
 http://localhost:<port>/swagger
 ```
-
-## Seeding Data
-The database is seeded with:
-- 3 Music Labels
-- 6 Albums
-- 10 Artists
-
-## Contribution
-Feel free to fork, submit PRs, or raise issues.
-
-## License
-MIT License
